@@ -1,0 +1,14 @@
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # RIMUOVI COMPLETAMENTE LA CSP
+    # Non aggiungere Content-Security-Policy
+    
+    # Headers di sicurezza opzionali
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "

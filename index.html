@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comitato Studentesco New Wave</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Connection Status -->
+    <div class="connection-status" id="connectionStatus">
+        <i class="fas fa-wifi"></i>
+        <span>Connessione...</span>
+    </div>
+    
+    <div class="sync-indicator" id="syncIndicator">
+        <i class="fas fa-sync fa-spin"></i>
+        <span>Sincronizzazione in corso...</span>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeLoginModal">&times;</button>
+            <h2 class="modal-title">Accesso Admin</h2>
+            
+            <div class="security-info">
+                <i class="fas fa-shield-alt"></i> Accesso riservato al personale autorizzato
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" required autocomplete="current-password">
+                </div>
+                
+                <div class="login-attempts" id="loginAttempts">
+                    Tentativi rimanenti: <span id="attemptsCount">5</span>
+                </div>
+                
+                <button type="submit" class="cta-button" style="width: 100%;" id="loginButton">
+                    <i class="fas fa-lock"></i> Accedi
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Question Modal -->
+    <div class="modal" id="questionModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeQuestionModal">&times;</button>
+            <h2 class="modal-title">Invia una Domanda</h2>
+            <form id="questionForm">
+                <div class="form-group">
+                    <label for="questionText">La tua domanda</label>
+                    <textarea id="questionText" class="form-control" placeholder="Scrivi qui la tua domanda..." required></textarea>
+                </div>
+                <button type="submit" class="cta-button" style="width: 100%;">Invia Domanda</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Content Modal -->
+    <div class="modal" id="editContentModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeEditModal">&times;</button>
+            <h2 class="modal-title">Modifica Contenuto</h2>
+            <form id="editContentForm">
+                <div class="form-group">
+                    <label for="contentTitle">Titolo</label>
+                    <input type="text" id="contentTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="contentText">Testo</label>
+                    <textarea id="contentText" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="cta-button" style="width: 100%;">Salva Modifiche</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add News Modal -->
+    <div class="modal" id="addNewsModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeAddNewsModal">&times;</button>
+            <h2 class="modal-title">Aggiungi Novità</h2>
+            <form id="addNewsForm">
+                <div class="form-group">
+                    <label for="newsTitle">Titolo</label>
+                    <input type="text" id="newsTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="newsDate">Data</label>
+                    <input type="date" id="newsDate" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="newsContent">Contenuto</label>
+                    <textarea id="newsContent" class="form-control" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Aggiungi Media (Opzionale) - Usa Google Drive</label>
+                    <div class="media-type-selector">
+                        <div class="media-type-btn active" data-type="none">Nessun Media</div>
+                        <div class="media-type-btn" data-type="image">Immagine</div>
+                        <div class="media-type-btn" data-type="video">Video</div>
+                    </div>
+                    
+                    <!-- Campo URL Google Drive -->
+                    <div id="mediaUrlInput" style="display: none; margin-top: 15px;">
+                        <label for="externalMediaUrl">URL Google Drive</label>
+                        <input type="url" id="externalMediaUrl" class="form-control" 
+                               placeholder="Incolla il link di condivisione Google Drive">
+                        <small class="form-text text-muted">
+                            📖 Istruzioni: Carica il file su Drive → Condividi → "Chiunque con il link" → Copia link
+                        </small>
+                        
+                        <!-- Anteprima -->
+                        <div class="media-preview-container" style="margin-top: 15px;">
+                            <div id="imagePreview" class="media-preview" style="display: none;">
+                                <img id="previewImage" src="" alt="Anteprima immagine" style="max-width: 100%; border-radius: 8px;">
+                            </div>
+                            <div id="videoPreview" class="media-preview" style="display: none;">
+                                <video id="previewVideo" controls style="max-width: 100%; border-radius: 8px;">
+                                    Il tuo browser non supporta il video.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rimuovi upload file locali -->
+                    <!-- <div id="imageUpload" class="file-upload" style="display: none;"> ... </div> -->
+                    <!-- <div id="videoUpload" class="file-upload" style="display: none;"> ... </div> -->
+                </div>
+                
+                <button type="submit" class="cta-button" style="width: 100%;">Aggiungi Novità</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Link Modal -->
+    <div class="modal" id="editLinkModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeLinkModal">&times;</button>
+            <h2 class="modal-title">Configura Link Aggiuntivo</h2>
+            <form id="editLinkForm">
+                <div class="form-group">
+                    <label for="linkUrl">URL del Link</label>
+                    <input type="url" id="linkUrl" class="form-control" placeholder="https://esempio.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="linkText">Testo del Link</label>
+                    <input type="text" id="linkText" class="form-control" placeholder="Il nostro sito" required>
+                </div>
+                <button type="submit" class="cta-button" style="width: 100%;">Salva Link</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="3ba48853-494b-47ba-aebe-e4e2908e3011.png" alt="New Wave Logo" onerror="this.style.display='none'; this.parentNode.innerHTML='NW'; this.parentNode.style.background='linear-gradient(135deg, var(--wave), var(--secondary))'; this.parentNode.style.color='white'; this.parentNode.style.fontWeight='bold'; this.parentNode.style.fontSize='1.2rem';">
+                </div>
+                <div class="logo-text">
+                    <span class="logo-main">NEW WAVE</span>
+                    <span class="logo-sub">Comitato Studentesco</span>
+                </div>
+            </div>
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#chi-siamo">Chi Siamo</a></li>
+                    <li><a href="#novita">Novità</a></li>
+                    <li><a href="#domande" id="askQuestionLink">Fai una Domanda</a></li>
+                    <li><a href="#contatti">Contatti</a></li>
+                    <li><a href="#" id="loginLink">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Admin Panel (visible only when logged in) -->
+    <div class="admin-panel" id="adminPanel" style="display: none;">
+        <div class="container">
+            <div class="admin-header">
+                <h2>Pannello di Amministrazione</h2>
+                <div class="admin-actions">
+                    <button class="btn btn-primary" id="editHomeBtn">Modifica Home</button>
+                    <button class="btn btn-success" id="addNewsBtn">Aggiungi Novità</button>
+                    <button class="btn btn-warning" id="viewQuestionsBtn">Visualizza Domande</button>
+                    <button class="btn btn-warning" id="editLinkBtn">Configura Link</button>
+                    <button class="btn btn-info" id="syncDriveBtn">
+                        <i class="fas fa-sync"></i> Sincronizza Drive
+                    </button>
+                    <button class="btn btn-danger" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container hero-content">
+            <div class="hero-logo">
+                <img src="3ba48853-494b-47ba-aebe-e4e2908e3011.png" alt="New Wave Logo" onerror="this.style.display='none'; this.parentNode.innerHTML='NW'; this.parentNode.style.background='linear-gradient(135deg, var(--wave), var(--secondary))'; this.parentNode.style.color='white'; this.parentNode.style.fontWeight='bold'; this.parentNode.style.fontSize='3rem'; this.parentNode.style.display='flex'; this.parentNode.style.alignItems='center'; this.parentNode.style.justifyContent='center';">
+            </div>
+            <h1 id="heroTitle">COMITATO STUDENTESCO NEW WAVE</h1>
+            <p id="heroText">L'onda del cambiamento nella tua scuola. Innovazione, rappresentanza e partecipazione attiva per tutti gli studenti.</p>
+            <a href="#domande" class="cta-button" id="askQuestionBtn">Fai una Domanda</a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="main-content" id="chi-siamo">
+        <div class="container">
+            <h2 class="section-title">Cosa Facciamo</h2>
+            <div class="content-grid">
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h2>Rappresentanza</h2>
+                    <p>Rappresentiamo tutti gli studenti della scuola, portando le vostre idee e necessità all'attenzione della direzione.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h2>Proposte</h2>
+                    <p>Raccogliamo e sviluppiamo proposte per migliorare la scuola, dagli spazi comuni alle attività extracurriculari.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h2>Eventi</h2>
+                    <p>Organizziamo eventi, assemblee e iniziative per rendere la vita scolastica più coinvolgente e interessante.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Novità Section -->
+    <section class="novita-section" id="novita">
+        <div class="container">
+            <h2 class="section-title">Novità</h2>
+            <div class="novita-grid" id="newsGrid">
+                <!-- News items will be dynamically added here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Questions Section -->
+    <section class="questions-section" id="domande">
+        <div class="container">
+            <h2 class="section-title">Fai una Domanda</h2>
+            <p style="text-align: center; margin-bottom: 2rem;">Hai una domanda per il comitato studentesco? Clicca il pulsante qui sotto per inviarcela!</p>
+            <div style="text-align: center;">
+                <button class="cta-button" id="openQuestionModal">Invia una Domanda</button>
+            </div>
+            
+            <!-- Admin Questions View -->
+            <div id="adminQuestionsView" style="display: none; margin-top: 3rem;">
+                <h2 class="section-title">Domande Ricevute</h2>
+                <div class="questions-list" id="questionsList">
+                    <!-- Questions will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Links Section -->
+    <section class="links-section" id="contatti">
+        <div class="container">
+            <h2 class="section-title">Seguici e Contattaci</h2>
+            <p>Resta aggiornato sulle nostre attività e contattaci per qualsiasi proposta o domanda</p>
+            <div class="social-links">
+                <a href="https://www.instagram.com/comitatonewwave?utm_source=ig_web_button_share_sheet&igsh=MThnaDRncXc5bHJrZA==" class="social-link" target="_blank">
+                    <i class="fab fa-instagram"></i> Instagram
+                </a>
+                <a href="#" class="social-link admin-only" id="custom-link">
+                    <i class="fas fa-link"></i> <span id="customLinkText">Link Aggiuntivo</span>
+                    <div class="admin-badge" title="Solo Admin">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <div class="logo">
+                    <img src="3ba48853-494b-47ba-aebe-e4e2908e3011.png" alt="New Wave Logo" onerror="this.style.display='none'; this.parentNode.innerHTML='NW'; this.parentNode.style.background='linear-gradient(135deg, var(--wave), var(--secondary))'; this.parentNode.style.color='white'; this.parentNode.style.fontWeight='bold'; this.parentNode.style.fontSize='1rem'; this.parentNode.style.display='flex'; this.parentNode.style.alignItems='center'; this.parentNode.style.justifyContent='center';">
+                </div>
+                <span>NEW WAVE</span>
+            </div>
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#chi-siamo">Chi Siamo</a>
+                <a href="#novita">Novità</a>
+                <a href="#domande">Fai una Domanda</a>
+                <a href="#contatti">Contatti</a>
+            </div>
+            <p class="copyright">Comitato Studentesco New Wave - Tutti i diritti riservati &copy; 2025</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script src="app.js"></script>
+</body>
+</html>
